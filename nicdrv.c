@@ -139,13 +139,13 @@ int ecx_setupnic(ecx_portt* port, const char* ifname, int secondary) {
         }
   } else {
     // initialize mutex
-//    osMutexAttr_t mtxAttr = {0};
-//    mtxAttr.name = "ecGetIndexMutex";
-//    port->getindex_mutex = osMutexNew(&mtxAttr);
-//    mtxAttr.name = "ecTxMutex";
-//    port->tx_mutex = osMutexNew(&mtxAttr);
-//    mtxAttr.name = "ecRxMutex";
-//    port->rx_mutex = osMutexNew(&mtxAttr);
+    osMutexAttr_t mtxAttr = {0};
+    mtxAttr.name = "ecGetIndexMutex";
+    port->getindex_mutex = osMutexNew(&mtxAttr);
+    mtxAttr.name = "ecTxMutex";
+    port->tx_mutex = osMutexNew(&mtxAttr);
+    mtxAttr.name = "ecRxMutex";
+    port->rx_mutex = osMutexNew(&mtxAttr);
 
     port->sockhandle = -1;
     port->lastidx = 0;
@@ -248,7 +248,7 @@ int ecx_outframe(ecx_portt* port, int idx, int stacknumber) {
   }
 
   osMutexAcquire(port->tx_mutex, osWaitForever);
-	len = ecx_nic_send(port, (*stack->txbuf)[idx], (*stack->txbuflength)[idx]);
+	len = ethSend( (*stack->txbuf)[idx], (*stack->txbuflength)[idx]);
   if (len>0) {
     (*stack->rxbufstat)[idx] = EC_BUF_TX;
     retval = 1;
